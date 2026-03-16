@@ -57,7 +57,7 @@ Open in `Telegram`: <https://t.me/auchebot>.
 >
 > Add the [`SSH` public key](./ssh.md#ssh-public-key) for [the `Autochecker` agent](#the-autochecker-agent) so that it can access your VM as the user `<user>`.
 
-1. [Connect to your VM as the user `<user>`](./vm-access.md#connect-to-your-vm-by-ssh-as-the-user-user-local) if not yet connected.
+1. [Connect to your VM as the user `<user>`](./vm-access.md#connect-to-your-vm-by-ssh-as-the-user-user-local).
 
 2. To check whether the public `SSH` key is already present,
 
