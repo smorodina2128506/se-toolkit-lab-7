@@ -24,3 +24,7 @@ docker-compose.yml
 Dockerfile
 
 *.md
+
+# Keep uv.lock for build
+!uv.lock
+!backend/pyproject.toml
