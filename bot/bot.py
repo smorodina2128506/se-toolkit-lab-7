@@ -16,11 +16,11 @@ bot_dir = Path(__file__).parent
 sys.path.insert(0, str(bot_dir))
 
 from config import load_settings
-from handlers.health import handle_health
+from handlers.start import handle_start
 from handlers.help import handle_help
+from handlers.health import handle_health
 from handlers.labs import handle_labs
 from handlers.scores import handle_scores
-from handlers.start import handle_start
 
 
 def parse_command(command: str) -> tuple[str, str | None]:
@@ -61,8 +61,8 @@ def handle_command(command: str) -> str:
         case "/scores" | "scores":
             return handle_scores(arg)
         case _:
-            # Natural language query - route to LLM
-            return f"I received your message: {command}\n\n(This will be processed by LLM in future iterations)"
+            # Unknown command - suggest /help
+            return f"❓ Unknown command: {command}\n\nUse /help to see available commands."
 
 
 def run_test_mode(command: str | None = None) -> int:
