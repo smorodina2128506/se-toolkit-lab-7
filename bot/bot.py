@@ -18,6 +18,7 @@ sys.path.insert(0, str(bot_dir))
 from config import load_settings
 from handlers.health import handle_health
 from handlers.help import handle_help
+from handlers.labs import handle_labs
 from handlers.scores import handle_scores
 from handlers.start import handle_start
 
@@ -55,6 +56,8 @@ def handle_command(command: str) -> str:
             return handle_help()
         case "/health" | "health":
             return handle_health()
+        case "/labs" | "labs":
+            return handle_labs()
         case "/scores" | "scores":
             return handle_scores(arg)
         case _:
