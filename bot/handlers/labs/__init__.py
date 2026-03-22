@@ -21,11 +21,30 @@ def handle_labs() -> str:
         if not items:
             return "📚 No labs available at the moment."
 
-        # Group items by lab
+        # Group items by lab - try multiple field names
         labs = {}
         for item in items:
-            lab_id = item.get("lab_id", item.get("id", "unknown"))
-            lab_name = item.get("lab_name", item.get("name", "Unknown Lab"))
+            # Try different field names for lab id
+            lab_id = (
+                item.get("lab_id")
+                or item.get("lab")
+                or item.get("id")
+                or "unknown"
+            )
+            
+            # Try different field names for lab name
+            lab_name = (
+                item.get("lab_name")
+                or item.get("name")
+                or item.get("title")
+                or item.get("description")
+                or f"Lab {lab_id}"
+            )
+            
+            # Convert lab_id to standard format if needed
+            if isinstance(lab_id, int):
+                lab_id = f"lab-{lab_id:02d}"
+            
             if lab_id not in labs:
                 labs[lab_id] = lab_name
 
