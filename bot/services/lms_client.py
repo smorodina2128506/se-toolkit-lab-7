@@ -1,5 +1,7 @@
 """LMS API Client Service."""
 
+import httpx
+
 from config import BotSettings
 
 
@@ -15,24 +17,61 @@ class LmsClient:
         self.settings = settings
         self.base_url = settings.lms_api_base_url
         self.api_key = settings.lms_api_key
+        self._headers = {"Authorization": f"Bearer {self.api_key}"}
 
-    def get_scores(self, lab: str | None = None) -> dict:
-        """Fetch scores from the LMS API.
+    def get_items(self) -> dict | None:
+        """Fetch items (labs and tasks) from the LMS API.
+
+        Returns:
+            Dictionary containing items data, or None if request failed.
+
+        Raises:
+            httpx.RequestError: If the request fails.
+        """
+        if not self.base_url:
+            msg = "LMS_API_BASE_URL not configured"
+            raise httpx.RequestError(msg)
+
+        url = f"{self.base_url.rstrip('/')}/items/"
+        with httpx.Client() as client:
+            response = client.get(url, headers=self._headers, timeout=10.0)
+            response.raise_for_status()
+            return response.json()
+
+    def get_pass_rates(self, lab: str) -> dict | None:
+        """Fetch pass rates for a specific lab.
 
         Args:
-            lab: Optional lab identifier to filter scores.
+            lab: Lab identifier (e.g., "lab-04").
 
         Returns:
-            Dictionary containing scores data.
-        """
-        # TODO: Implement actual API call
-        return {"scores": [], "lab": lab}
+            Dictionary containing pass rates data, or None if request failed.
 
-    def get_health(self) -> bool:
-        """Check if the LMS API is healthy.
+        Raises:
+            httpx.RequestError: If the request fails.
+        """
+        if not self.base_url:
+            msg = "LMS_API_BASE_URL not configured"
+            raise httpx.RequestError(msg)
+
+        url = f"{self.base_url.rstrip('/')}/analytics/pass-rates"
+        params = {"lab": lab}
+        with httpx.Client() as client:
+            response = client.get(url, headers=self._headers, params=params, timeout=10.0)
+            response.raise_for_status()
+            return response.json()
+
+    def get_health(self) -> dict:
+        """Check if the LMS API is healthy by fetching items.
 
         Returns:
-            True if API is healthy, False otherwise.
+            Dictionary with health status.
         """
-        # TODO: Implement actual health check
-        return True
+        try:
+            items = self.get_items()
+            count = len(items) if items else 0
+            return {"healthy": True, "item_count": count}
+        except httpx.RequestError as e:
+            return {"healthy": False, "error": str(e)}
+        except Exception as e:
+            return {"healthy": False, "error": str(e)}

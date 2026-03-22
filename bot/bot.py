@@ -61,8 +61,8 @@ def handle_command(command: str) -> str:
         case "/scores" | "scores":
             return handle_scores(arg)
         case _:
-            # Natural language query - route to LLM
-            return f"I received your message: {command}\n\n(This will be processed by LLM in future iterations)"
+            # Unknown command - suggest /help
+            return f"❓ Unknown command: {command}\n\nUse /help to see available commands."
 
 
 def run_test_mode(command: str | None = None) -> int:
