@@ -14,5 +14,7 @@ def handle_start() -> str:
         "• Check available labs\n"
         "• Get backend status\n"
         "• Get help with commands\n\n"
-        "Use /help to see all available commands."
+        "You can use commands like /help, /labs, /scores\n"
+        "Or just ask me questions in natural language!\n\n"
+        "Try: 'What labs are available?' or 'Show me scores for lab 4'"
     )
