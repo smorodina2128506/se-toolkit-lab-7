@@ -15,7 +15,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_items",
-            "description": "Get list of all labs and tasks available in the system",
+            "description": "Get list of all labs and tasks available in the system. Use this when user asks about available labs, what labs exist, or lab structure.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -27,7 +27,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_learners",
-            "description": "Get list of enrolled students and their groups",
+            "description": "Get list of ALL enrolled students and their groups. Use this when user asks about how many students, total enrollment, number of learners, or student count.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -39,7 +39,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_scores",
-            "description": "Get score distribution (4 buckets) for a specific lab",
+            "description": "Get score distribution (4 buckets) for a specific lab. Use when user asks about score distribution or grade buckets.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -56,13 +56,13 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_pass_rates",
-            "description": "Get per-task average pass rates and attempt counts for a lab",
+            "description": "Get per-task average pass rates and attempt counts for a lab. Use when user asks about pass rates, scores, completion, or task performance for a specific lab.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "lab": {
                         "type": "string",
-                        "description": "Lab identifier, e.g. 'lab-01', 'lab-04'",
+                        "description": "Lab identifier, e.g. 'lab-01', 'lab-04'. MUST be provided.",
                     }
                 },
                 "required": ["lab"],
@@ -73,7 +73,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_timeline",
-            "description": "Get submissions per day timeline for a specific lab",
+            "description": "Get submissions per day timeline for a specific lab. Use when user asks about submission timeline, activity over time, or when submissions were made.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -90,13 +90,13 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_groups",
-            "description": "Get per-group scores and student counts for a specific lab",
+            "description": "Get per-group scores and student counts for a specific lab. Use this when user asks about which group is best, group comparison, group performance, or group rankings.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "lab": {
                         "type": "string",
-                        "description": "Lab identifier, e.g. 'lab-01', 'lab-04'",
+                        "description": "Lab identifier, e.g. 'lab-01', 'lab-02', 'lab-03'. MUST be provided.",
                     }
                 },
                 "required": ["lab"],
@@ -107,7 +107,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_top_learners",
-            "description": "Get top N learners by score for a specific lab",
+            "description": "Get top N learners by score for a specific lab. Use when user asks about top students, best performers, leaderboard, or ranking.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -117,7 +117,7 @@ TOOLS = [
                     },
                     "limit": {
                         "type": "integer",
-                        "description": "Number of top learners to return, e.g. 5",
+                        "description": "Number of top learners to return, e.g. 5. Default is 5.",
                         "default": 5,
                     },
                 },
@@ -129,7 +129,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_completion_rate",
-            "description": "Get completion rate percentage for a specific lab",
+            "description": "Get completion rate percentage for a specific lab. Use when user asks about completion rate or what percentage completed.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -146,7 +146,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "trigger_sync",
-            "description": "Trigger ETL sync to refresh data from autochecker",
+            "description": "Trigger ETL sync to refresh data from autochecker. Use when user asks to refresh or update data.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -266,35 +266,28 @@ class LlmService:
             case "get_items":
                 result = client.get_items()
             case "get_learners":
-                # TODO: Implement get_learners in LmsClient
-                result = {"learners": []}
+                result = client.get_learners()
             case "get_scores":
                 lab = arguments.get("lab", "")
-                # TODO: Implement get_scores in LmsClient
-                result = {"scores": [], "lab": lab}
+                result = client.get_scores(lab)
             case "get_pass_rates":
                 lab = arguments.get("lab", "")
                 result = client.get_pass_rates(lab)
             case "get_timeline":
                 lab = arguments.get("lab", "")
-                # TODO: Implement get_timeline in LmsClient
-                result = {"timeline": [], "lab": lab}
+                result = client.get_timeline(lab)
             case "get_groups":
                 lab = arguments.get("lab", "")
-                # TODO: Implement get_groups in LmsClient
-                result = {"groups": [], "lab": lab}
+                result = client.get_groups(lab)
             case "get_top_learners":
                 lab = arguments.get("lab", "")
                 limit = arguments.get("limit", 5)
-                # TODO: Implement get_top_learners in LmsClient
-                result = {"top_learners": [], "lab": lab, "limit": limit}
+                result = client.get_top_learners(lab, limit)
             case "get_completion_rate":
                 lab = arguments.get("lab", "")
-                # TODO: Implement get_completion_rate in LmsClient
-                result = {"completion_rate": 0, "lab": lab}
+                result = client.get_completion_rate(lab)
             case "trigger_sync":
-                # TODO: Implement trigger_sync in LmsClient
-                result = {"status": "synced"}
+                result = client.trigger_sync()
             case _:
                 msg = f"Unknown tool: {tool_name}"
                 raise ValueError(msg)
